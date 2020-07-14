@@ -1,36 +1,56 @@
-# :package_description
+# Generate signed URL with an expiration date
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/:package_name.svg?style=flat-square)](https://packagist.org/packages/spatie/:package_name)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spatie/:package_name/run-tests?label=tests)](https://github.com/spatie/:package_name/actions?query=workflow%3Arun-tests+branch%3Amaster)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/:package_name.svg?style=flat-square)](https://packagist.org/packages/spatie/:package_name)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/basekit/signed-url.svg)](https://packagist.org/packages/basekit/signed-url)
+[![GitHub Tests Action Status](https://github.com/basekit/signed-url/workflows/Tests/badge.svg)](https://github.com/basekit/signed-url/workflows/Tests/badge.svg)
+[![Total Downloads](https://img.shields.io/packagist/dt/basekit/signed-url.svg)](https://packagist.org/packages/basekit/signed-url)
 
-**Note:** Replace ```:author_name``` ```:author_username``` ```:author_email``` ```:package_name``` ```:package_description``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md) and [composer.json](composer.json) files, then delete this line.
+## Introduction
 
-This is where your description should go. Try and limit it to a paragraph or two. Consider adding a small example.
+This package is for simple generation and validation of signed URLs.
 
-## Support us
-
-Learn how to create a package like this one, by watching our premium video course:
-
-[![Laravel Package training](https://spatie.be/github/package-training.jpg)](https://laravelpackage.training)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+What is a signed URL?
+> A signed URL is a URL that provides limited permission and time to make a request. Signed URLs contain authentication information in their query string, allowing users without credentials to perform specific actions on a resource
+[source](https://cloud.google.com/storage/docs/access-control/signed-urls)
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require spatie/:package_name
+composer require basekit/signed-url
 ```
 
 ## Usage
 
-``` php
-$skeleton = new Spatie\Skeleton();
-echo $skeleton->echoPhrase('Hello, Spatie!');
+### Create a signed URL
+
+```php
+$urlSigner = new BaseKit\SignedUrl('secret');
+$url = $urlSigner->sign('http://dev.app', new \DateTime("+ 10 days"));
+echo $url;
+// http://dev.app?expires=1597606297&signature=2bcbe00d36010bae3e6bc6e6abe79f6cbc135f360285eeb17e9c53753b4b223a"
+```
+
+### Validate a signed URL
+```php
+$url = "http://dev.app?expires=1597606297&signature=2bcbe00d36010bae3e6bc6e6abe79f6cbc135f360285eeb17e9c53753b4b223a";
+$urlSignValidator = new BaseKit\SignedUrl('secret');
+$valid = $urlSignValidator->validate($url);
+var_dump($valid);
+// bool(true)
+
+```
+
+The package will append 2 querystring parameters to the URL that represent the expiry of the link, and the signature. 
+The signature itself is generated using the original url, the expiry date you passed, and a project specific secret.
+
+It's possible to override the names of these querystring parameters in object instantiation, as below:
+
+```php
+$urlSigner = new BaseKit\SignedUrl('secret', 'expirationParam', 'secureSignature');
+$url = $urlSigner->sign('http://dev.app', new \DateTime("+ 10 days"));
+echo $url;
+// https://www.dev.app/?expirationParam=1597608096&secureSignature=ef6839ad6b1a4cfca8e3e04bb2a74da0e9d3d9c4d9870125f499f75c9ef5d2b6
 ```
 
 ## Testing
@@ -39,22 +59,10 @@ echo $skeleton->echoPhrase('Hello, Spatie!');
 composer test
 ```
 
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security
-
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
-
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
-- [All Contributors](../../contributors)
+- [Rob Mills](https://github.com/robjmills)
+- [BaseKit](https://github.com/basekit)
 
 ## License
 

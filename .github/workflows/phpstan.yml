@@ -1,14 +1,13 @@
-name: Psalm
+name: PHPStan
 
 on:
     push:
         paths:
             - '**.php'
-            - 'psalm.xml'
 
 jobs:
-    psalm:
-        name: psalm
+    phpstan:
+        name: phpstan
         runs-on: ubuntu-latest
         strategy:
           fail-fast: true
@@ -32,5 +31,5 @@ jobs:
             - name: Run composer install
               run: composer install -n --prefer-dist
 
-            - name: Run psalm
-              run: composer psalm
+            - name: Run PHPStan
+              run: composer phpstan

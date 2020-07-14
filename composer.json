@@ -1,43 +1,45 @@
 {
-    "name": ":vendor_name/:package_name",
-    "description": ":package_description",
+    "name": "basekit/signed-url",
+    "description": "Generate secure URLs with an expiration",
     "keywords": [
-        ":vendor_name",
-        ":package_name"
+        "basekit",
+        "signed-url"
     ],
-    "homepage": "https://github.com/spatie/:package_name",
+    "homepage": "https://github.com/basekit/signed-url",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
-            "homepage": "https://spatie.be",
+            "name": "Rob Mills",
+            "email": "rob.mills@basekit.com",
+            "homepage": "https://basekit.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^7.4"
+        "php": "~7.3",
+        "league/uri": "^6.0",
+        "league/uri-components": "^2.2"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16",
+        "php-mock/php-mock-phpunit": "^2.6",
+        "phpstan/phpstan": "^0.12.36",
         "phpunit/phpunit": "^9.0",
         "vimeo/psalm": "^3.11"
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\Skeleton\\": "src"
+            "BaseKit\\SignedUrl\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\Skeleton\\Tests\\": "tests"
+            "BaseKit\\SignedUrl\\Tests\\": "tests"
         }
     },
     "scripts": {
+        "phpstan": "vendor/bin/phpstan analyse --level=5 src tests",
         "psalm": "vendor/bin/psalm",
-        "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
-        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "test": "vendor/bin/phpunit"
     },
     "config": {
         "sort-packages": true
