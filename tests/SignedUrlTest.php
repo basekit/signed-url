@@ -50,11 +50,30 @@ class SignedUrlTest extends TestCase
     }
 
     /** @test */
+    public function it_signs_a_url_without_expiry_and_returns_as_string()
+    {
+        $urlSigner = new SignedUrl('honey-badger');
+        $url = $urlSigner->sign('http://dev.app');
+        $this->assertIsString($url);
+    }
+
+    /** @test */
     public function it_validates_a_newly_signed_url()
     {
         $urlSigner = new SignedUrl('honey-badger');
         $expiry = new DateTime("+ 10 days");
         $url = $urlSigner->sign('http://dev.app', $expiry);
+
+        $urlSignValidator = new SignedUrl('honey-badger');
+        $this->assertTrue($urlSignValidator->validate($url));
+    }
+
+    /** @test */
+    public function it_validates_a_newly_signed_url_without_expiry()
+    {
+        $urlSigner = new SignedUrl('honey-badger');
+        $url = $urlSigner->sign('http://dev.app');
+        var_dump($url);
 
         $urlSignValidator = new SignedUrl('honey-badger');
         $this->assertTrue($urlSignValidator->validate($url));

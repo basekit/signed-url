@@ -1,4 +1,4 @@
-# Generate signed URL with an expiration date
+# Generate signed URL with an optional expiration date
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/basekit/signed-url.svg)](https://packagist.org/packages/basekit/signed-url)
 [![GitHub Tests Action Status](https://github.com/basekit/signed-url/workflows/Tests/badge.svg)](https://github.com/basekit/signed-url/workflows/Tests/badge.svg)
@@ -22,11 +22,20 @@ composer require basekit/signed-url
 
 ## Usage
 
-### Create a signed URL
+### Create a signed URL with an expiration
 
 ```php
 $urlSigner = new BaseKit\SignedUrl('secret');
 $url = $urlSigner->sign('http://dev.app', new \DateTime("+ 10 days"));
+echo $url;
+// http://dev.app?expires=1597606297&signature=2bcbe00d36010bae3e6bc6e6abe79f6cbc135f360285eeb17e9c53753b4b223a"
+```
+
+### Create a signed URL without expiration
+
+```php
+$urlSigner = new BaseKit\SignedUrl('secret');
+$url = $urlSigner->sign('http://dev.app');
 echo $url;
 // http://dev.app?expires=1597606297&signature=2bcbe00d36010bae3e6bc6e6abe79f6cbc135f360285eeb17e9c53753b4b223a"
 ```
@@ -41,8 +50,8 @@ var_dump($valid);
 
 ```
 
-The package will append 2 querystring parameters to the URL that represent the expiry of the link, and the signature. 
-The signature itself is generated using the original url, the expiry date you passed, and a project specific secret.
+The package will append 1 or 2 querystring parameters to the URL that represent the expiry of the link (when provided), and the signature. 
+The signature itself is generated using the original url, the expiry date if provided, and a project specific secret.
 
 It's possible to override the names of these querystring parameters in object instantiation, as below:
 

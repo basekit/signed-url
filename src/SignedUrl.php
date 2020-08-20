@@ -26,7 +26,7 @@ class SignedUrl
         $this->signatureParameter = $signatureParameter;
     }
 
-    public function sign(string $url, \DateTimeInterface $expiry): string
+    public function sign(string $url, ?DateTimeInterface $expiry = null): string
     {
         $url = Http::createFromString($url);
         $this->validateUrlDoesNotContainReservedParameters($url);
@@ -54,19 +54,27 @@ class SignedUrl
     private function signatureHasNotExpired(Http $url): bool
     {
         $query = Query::createFromUri($url);
+        if ($query->has($this->expiresParameter) === false) {
+            return true;
+        }
         $expiresParameter = $query->get($this->expiresParameter);
         return $this->getCurrentTimestamp() < $expiresParameter;
     }
 
-    private function createSignature(Http $url, DateTimeInterface $expiration): string
+    private function createSignature(Http $url, ?DateTimeInterface $expiration): string
     {
-        $url = UriModifier::appendQuery($url, $this->expiresParameter.'=' . $expiration->format('U'));
+        if($expiration) {
+            $url = UriModifier::appendQuery($url, $this->expiresParameter . '=' . $expiration->format('U'));
+        }
         return $this->generateSignature((string)$url);
     }
 
-    private function signUrl(Http $url, DateTimeInterface $expiration, string $signature): string
+    private function signUrl(Http $url, ?DateTimeInterface $expiration, string $signature): string
     {
-        $url = UriModifier::appendQuery($url, $this->expiresParameter.'=' . $expiration->format('U') . '&'.$this->signatureParameter.'=' . $signature);
+        if($expiration) {
+            $url = UriModifier::appendQuery($url, $this->expiresParameter .'=' . $expiration->format('U'));
+        }
+        $url = UriModifier::appendQuery($url, $this->signatureParameter .'=' . $signature);
         return (string)$url;
     }
 
